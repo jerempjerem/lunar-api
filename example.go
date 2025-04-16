@@ -182,18 +182,22 @@ func (c *LunarClient) GetTasks() ([]Task, error) {
 	return tasks, nil
 }
 
-// BuyToken buys a Pump.Fun or Raydium token
-func (c *LunarClient) BuyToken(taskUUID, tokenAddress string, amount float64, poolAddress string, isRaydium bool) error {
+// BuyToken buys a Pump.Fun, Pump.Fun AMM or Raydium AMM token
+func (c *LunarClient) BuyToken(taskUUID, tokenAddress string, amount float64, poolAddress, baseVault, quoteVault string, isRaydium, isPfAmm, isPumpFun bool) error {
 	if c.challengeResponse == "" {
 		return fmt.Errorf("not authenticated - call Login() first")
 	}
 
-	payload := map[string]interface{}{
+	payload := map[string]any{
 		"task_uuid":          taskUUID,
 		"token_address":      tokenAddress,
-		"pool_address":       poolAddress,
+		"pool_address":       poolAddress, 	// pool ID (optional)
+		"base_vault":         baseVault,	// base vault address (optional)
+		"quote_vault":        quoteVault,	// quote vault address (optional)
 		"is_raydium":         isRaydium,
-		"buy_amount":         amount,
+		"is_pf_amm":          isPfAmm, 		
+		"is_pump_fun":        isPumpFun, 
+		"buy_amount":         amount, // overide the set amount in the task (optional)
 		"challenge_response": c.challengeResponse,
 	}
 
@@ -229,7 +233,7 @@ func (c *LunarClient) SellToken(taskUUID, tokenAddress string, percentage float6
 		return fmt.Errorf("not authenticated - call Login() first")
 	}
 
-	payload := map[string]interface{}{
+	payload := map[string]any{
 		"task_uuid":          taskUUID,
 		"token_address":      tokenAddress,
 		"sell_percentage":    percentage,
