@@ -86,15 +86,19 @@ class LunarClient:
         
         return r.json()
 
-    def buy_token(self, task_uuid, token_address, amount=0, pool_address="", is_raydium=True):
-        """Buy a Pump.Fun or Raydium token
+    def buy_token(self, task_uuid, token_address, amount=0, pool_address="", base_vault="", quote_vault="", is_raydium=False, is_pumpfun=False, is_pumpfun_amm=False):
+        """Buy a Pump.Fun, Pump.Fun AMM or Raydium AMM token
         
         Args:
             task_uuid (str): UUID of the task to use
             token_address (str): Address of token to buy
             pool_address (str): Optional RaydiumAmm Id address
+            base_vault (str): Optional base vault address
+            quote_vault (str): Optional quote vault address
             amount (float): Optional buy amount in SOL, if empty the buy amount set in the task will be used
             is_raydium (bool): Whether to use Raydium or not
+            is_pumpfun (bool): Whether to use Pump.Fun or not
+            is_pumpfun_amm (bool): Whether to use Pump.Fun AMM or not
         """
         if not self.challenge_response:
             raise Exception("Not authenticated - call login() first")
@@ -109,7 +113,11 @@ class LunarClient:
                 "task_uuid": task_uuid,
                 "token_address": token_address,
                 "pool_address": pool_address,
+                "base_vault": base_vault,
+                "quote_vault": quote_vault,
                 "is_raydium": is_raydium,
+                "is_pumpfun": is_pumpfun,
+                "is_pf_amm": is_pumpfun_amm,
                 "buy_amount": amount,
                 "challenge_response": self.challenge_response
             },
